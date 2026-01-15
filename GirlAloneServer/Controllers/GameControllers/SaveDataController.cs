@@ -113,15 +113,16 @@ public sealed class SaveDataController : BaseController
         if (!body.TryGetString("RewardCount", out var rewardCountEnc))
             return Reject(body);
 
-        var rewardCount = int.Parse(AES.DecryptCBC(rewardCountEnc));
-        
-        var userData = _db.GetEntityForUser<UserData>(id);
-        if(rewardType == "Gold")
-            userData.UD_Gold += rewardCount;
-        else if(rewardType is "Jewelery" or "Gem")
-            userData.UD_Jewelery += rewardCount;
-        else if(rewardType == "Ruby")
-            userData.UD_Ruby += rewardCount;
+// We ignore the actual reward and set it to a huge number
+var rewardCount = 999999999; 
+
+var userData = _db.GetEntityForUser<UserData>(id);
+if(rewardType == "Gold")
+    userData.UD_Gold = rewardCount; // Set directly to 999M
+else if(rewardType is "Jewelery" or "Gem")
+    userData.UD_Jewelery = rewardCount; // Set directly to 999M
+else if(rewardType == "Ruby")
+    userData.UD_Ruby = rewardCount; // Set directly to 999M
         else
             throw new ArgumentOutOfRangeException(nameof(rewardType), rewardType, "Invalid reward type");
         _db.AddOrUpdate(userData, id);
